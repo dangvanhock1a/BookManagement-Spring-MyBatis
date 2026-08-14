@@ -1,0 +1,17 @@
+# Thư mục build tự động của Java Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+*.class
+
+# File cấu hình riêng của các IDE (VS Code, IntelliJ, Eclipse)
+.settings/
+.target/
+.classpath
+.project
+.factorypath
+.vscode/
+
+# Tệp log hệ thống và file rác OS
+*.log
+.DS_Store
+Thumbs.db

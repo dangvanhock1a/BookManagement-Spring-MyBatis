@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Màn hình edit</title>
+    <link href="https://jsdelivr.net" rel="stylesheet">
+</head>
+<body class="container mt-5">
+    <div class="card mx-auto" style="max-width: 600px;">
+        <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Chỉnh sửa thông tin Book</h4>
+            <!-- Nút Back quay về màn hình Chi tiết nguồn di chuyển -->
+            <a th:href="@{/books/detail/{id}(id=${book.id}, page=${listPage}, sortBy=${listSortBy}, order=${listOrder})}" class="btn btn-sm btn-dark">Back</a>
+        </div>
+        <div class="card-body">
+            <div th:if="${param.error != null and param.error[0] == 'point'}" class="alert alert-danger">Lỗi: Point đánh giá không được là số âm!</div>
+
+            <form th:action="@{/books/update(page=${listPage}, sortBy=${listSortBy}, order=${listOrder})}" th:object="${book}" method="post">
+                <!-- Trường ẩn giữ ID để thực hiện câu lệnh UPDATE trong cơ sở dữ liệu -->
+                <input type="hidden" th:field="*{id}">
+                
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Tiêu đề sách (Title) *</label>
+                    <input type="text" th:field="*{title}" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Tác giả (Author) *</label>
+                    <input type="text" th:field="*{author}" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Point đánh giá</label>
+                    <input type="number" th:field="*{point}" class="form-control" min="0" max="5">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Bình luận (Comment)</label>
+                    <textarea th:field="*{bookcomment}" class="form-control" rows="4"></textarea>
+                </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-warning fw-bold">Thực hiện cập nhật</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

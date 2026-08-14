@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Màn hình hiển thị chi tiết</title>
+    <link href="https://jsdelivr.net" rel="stylesheet">
+</head>
+<body class="container mt-5">
+    <!-- Nơi tiếp nhận và hiển thị message khi hoàn tất tạo mới hoặc update -->
+    <div th:if="${successMessage}" class="alert alert-success text-center fw-bold mb-4" role="alert" th:text="${successMessage}"></div>
+
+    <div class="card mx-auto" style="max-width: 700px;">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Thông tin chi tiết Book</h4>
+            <!-- Nút Back quay lại màn hình nguồn nguồn di chuyển (Danh sách) và giữ nguyên trạng thái -->
+            <a th:href="@{/books(page=${listPage}, sortBy=${listSortBy}, order=${listOrder})}" class="btn btn-sm btn-light">Quay lại danh sách</a>
+        </div>
+        <div class="card-body fs-5">
+            <p><strong>Mã định danh (ID):</strong> <span th:text="${book.id}"></span></p>
+            <p><strong>Tiêu đề sách (Title):</strong> <span th:text="${book.title}"></span></p>
+            <p><strong>Tên tác giả (Author):</strong> <span th:text="${book.author}"></span></p>
+            <p><strong>Point đánh giá:</strong> <span th:text="${book.point}"></span> / 5</p>
+            <p><strong>Bình luận (Comment):</strong></p>
+            <div class="p-3 bg-light border rounded mb-3 text-break" th:text="${book.bookcomment ?: 'Không có bình luận nào.'}"></div>
+            <p class="text-muted fs-6"><small>Thời gian update bản ghi: <span th:text="${#temporals.format(book.lastupdate, 'yyyy-MM-dd HH:mm:ss')}"></span></small></p>
+        </div>
+        <div class="card-footer d-flex justify-content-end gap-2">
+            <!-- Button Add thêm -->
+            <a th:href="@{/books/add(page=${listPage}, sortBy=${listSortBy}, order=${listOrder})}" class="btn btn-success">Add thêm</a>
+            <!-- Button Edit -->
+            <a th:href="@{/books/edit/{id}(id=${book.id}, page=${listPage}, sortBy=${listSortBy}, order=${listOrder})}" class="btn btn-warning">Edit</a>
+            <!-- Button Delete (Sử dụng Form POST để bảo mật nghiệp vụ xóa) -->
+            <form th:action="@{/books/delete/{id}(id=${book.id})}" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn xóa cuốn sách này?')">
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

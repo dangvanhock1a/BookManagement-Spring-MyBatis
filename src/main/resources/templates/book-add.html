@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Màn hình tạo mới</title>
+    <link href="https://jsdelivr.net" rel="stylesheet">
+</head>
+<body class="container mt-5">
+    <div class="card mx-auto" style="max-width: 600px;">
+        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Tạo mới thông tin Book</h4>
+            <!-- Nút Back quay về màn hình nguồn di chuyển trước đó -->
+            <a th:href="@{/books(page=${listPage}, sortBy=${listSortBy}, order=${listOrder})}" class="btn btn-sm btn-light">Back</a>
+        </div>
+        <div class="card-body">
+            <!-- Hiển thị thông báo lỗi Validation nếu có nhập sai quy tắc -->
+            <div th:if="${param.error != null and param.error[0] == 'duplicate'}" class="alert alert-danger">Lỗi: Tên sách đã tồn tại hệ thống!</div>
+            <div th:if="${param.error != null and param.error[0] == 'point'}" class="alert alert-danger">Lỗi: Point đánh giá không được là số âm!</div>
+
+            <form th:action="@{/books/save(page=${listPage}, sortBy=${listSortBy}, order=${listOrder})}" th:object="${book}" method="post">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Tiêu đề sách (Title) *</label>
+                    <input type="text" th:field="*{title}" class="form-control" required placeholder="Nhập tên sách...">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Tác giả (Author) *</label>
+                    <input type="text" th:field="*{author}" class="form-control" required placeholder="Nhập tên tác giả...">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Point đánh giá</label>
+                    <input type="number" th:field="*{point}" class="form-control" min="0" max="5" placeholder="Nhập số điểm từ 0 - 5">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Bình luận (Comment)</label>
+                    <textarea th:field="*{bookcomment}" class="form-control" rows="4" placeholder="Nhập bình luận đánh giá sách..."></textarea>
+                </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-success">Thực hiện tạo mới</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
