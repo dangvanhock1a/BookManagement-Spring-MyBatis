@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Khai báo tài liệu XML tuân thủ các quy tắc định dạng (DTD) của bộ thư viện MyBatis Mapper 3.0 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 
+    Thẻ gốc <mapper> bắt buộc phải cấu hình thuộc tính 'namespace'.
+    Giá trị của 'namespace' phải chỉ định chính xác đường dẫn package (FQN) của Interface Java tương ứng.
+-->
+<mapper namespace="vn.co.usolv.bookmanagement.repository.BookMapper">
+
+    <!-- 
+        1. CẤU HÌNH RESULT MAP (Bản đồ ánh xạ kết quả)
+        Thẻ <resultMap> dùng để định nghĩa cách chuyển đổi dữ liệu từ cột trong Database thành thuộc tính Java.
+        - id: Tên định danh của bản đồ ánh xạ này (dùng để tái sử dụng ở các thẻ select phía dưới).
+        - type: Đường dẫn trỏ tới class Entity Java đại diện cho đối tượng Book.
+    -->
+    <resultMap id="BookResultMap" type="vn.co.usolv.bookmanagement.model.Book">
+        <!-- Thẻ <id> dùng riêng cho cột khóa chính (Primary Key) nhằm tối ưu hiệu năng bộ nhớ cache -->
+        <id property="id" column="id" />
+        
+        <!-- Thẻ <result> dùng cho các cột dữ liệu thông thường -->
+        <!-- property: tên biến trong Class Java | column: tên cột trong bảng cơ sở dữ liệu -->
+        <result property="author" column="author" />
+        <result property="title" column="title" />
+        <result property="point" column="point" />
+        <result property="bookcomment" column="bookcomment" />
+        <result property="lastupdate" column="lastupdate" />
+    </resultMap>
+
+    <!-- 
+        2. TRUY VẤN LẤY TOÀN BỘ SÁCH
+        - id: Phải trùng khớp hoàn toàn với tên hàm 'selectAllBooks()' trong Interface Java.
+        - resultMap: Trỏ tới 'BookResultMap' đã định nghĩa ở trên để tự động chuyển dòng dữ liệu thành Object Java.
+    -->
+    <select id="selectAllBooks" resultMap="BookResultMap">
+        SELECT id, author, title, point, bookcomment, lastupdate 
+        FROM public.book 
+        ORDER BY id ASC
+    </select>
+
+    <!-- 
+        3. TRUY VẤN LẤY CHI TIẾT SÁCH BẰNG ID
+        - id: Trùng khớp với hàm 'selectBookById(Integer id)' trong Java.
+        - parameterType: Kiểu dữ liệu của tham số truyền vào hàm (ở đây là int / Integer).
+        - #{id}: Ký pháp giữ chỗ (Placeholder) an toàn của MyBatis, tự động sinh ra Prepared Statement để chống tấn công SQL Injection.
+    -->
+    <select id="selectBookById" parameterType="java.lang.Integer" resultMap="BookResultMap">
+        SELECT id, author, title, point, bookcomment, lastupdate 
+        FROM public.book 
+        WHERE id = #{id}
+    </select>
+
+    <!-- 
+        4. THÊM MỚI MỘT CUỐN SÁCH
+        - id: Trùng khớp với hàm 'insertBook(Book book)' trong Java.
+        - parameterType: Truyền vào cả một đối tượng Book.
+        - Ký pháp #{...}: Các từ bên trong phải trùng khớp với tên thuộc tính (field) khai báo trong class Book.
+        - CURRENT_TIMESTAMP: Hàm nội tại của PostgreSQL tự động lấy ngày giờ hệ thống hiện tại để điền vào cột lastupdate.
+    -->
+    <insert id="insertBook" parameterType="vn.co.usolv.bookmanagement.model.Book">
+        INSERT INTO public.book (id, author, title, point, bookcomment, lastupdate)
+        VALUES (#{id}, #{author}, #{title}, #{point}, #{bookcomment}, CURRENT_TIMESTAMP)
+    </insert>
+
+    <!-- 
+        5. CẬP NHẬT THÔNG TIN SÁCH
+        - id: Trùng khớp với hàm 'updateBook(Book book)' trong Java.
+        - Câu lệnh thực hiện cập nhật tất cả các cột dựa theo điều kiện lọc WHERE id = #{id}.
+    -->
+    <update id="updateBook" parameterType="vn.co.usolv.bookmanagement.model.Book">
+        UPDATE public.book
+        SET author = #{author},
+            title = #{title},
+            point = #{point},
+            bookcomment = #{bookcomment},
+            lastupdate = CURRENT_TIMESTAMP
+        WHERE id = #{id}
+    </update>
+
+    <!-- 
+        6. XÓA SÁCH KHỎI HỆ THỐNG
+        - id: Trùng khớp với hàm 'deleteBookById(Integer id)' trong Java.
+    -->
+    <delete id="deleteBookById" parameterType="java.lang.Integer">
+        DELETE FROM public.book 
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

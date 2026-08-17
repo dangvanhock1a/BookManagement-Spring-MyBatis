@@ -1,4 +1,4 @@
-package vn.co.usolv.BookCurd;
+package vn.co.usolv.bookmanagement;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

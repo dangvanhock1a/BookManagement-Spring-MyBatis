@@ -1,4 +1,4 @@
-package vn.co.usolv.BookCurd;
+package vn.co.usolv.bookmanagement;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
