@@ -1,6 +1,4 @@
-========================================================================
 DỰ ÁN QUẢN LÝ SÁCH (BOOK MANAGEMENT APP) - SPRING BOOT & MYBATIS
-========================================================================
 
 Dự án được xây dựng theo kiến trúc chuẩn 3 tầng (3-Tier Architecture) 
 tích hợp hiệu quả các công nghệ hiện đại Backend và Frontend.
