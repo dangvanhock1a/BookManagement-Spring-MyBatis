@@ -22,7 +22,7 @@
         </div>
         <div class="card-body p-0">
             <table class="table table-hover table-striped mb-0 text-center align-middle">
-                <thead class="table-dark">
+                <thead class="table-primary">
                     <tr>
                         <th style="width: 15%">Mã ID</th>
                         <th style="width: 40%">Tên Sách</th>
@@ -54,7 +54,7 @@
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content shadow">
             <div class="modal-header bg-dark text-white">
-                <h5 class="modal-title fw-bold" id="formTitle">Thêm Sách Mới</h5>
+                <h5 class="modal-title fw-bold" id="formTitle">Thêm mới thông tin sách</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" onclick="resetForm()"></button>
             </div>
             <div class="modal-body">
@@ -71,9 +71,17 @@
                         <label for="bookAuthor" class="form-label fw-semibold">Tác Giả</label>
                         <input type="text" class="form-control" id="bookAuthor" required placeholder="Nhập tên tác giả">
                     </div>
+                    <div class="mb-3">
+                        <label for="point" class="form-label fw-semibold">Điểm đánh giá (1-5 sao)</label>
+                        <input type="number" class="form-control" id="point" min="1" max="5" placeholder="Nhập điểm 1-5">
+                    </div>
+                    <div class="mb-3">
+                        <label for="bookcomment" class="form-label fw-semibold">Lời bình luận / Ghi chú</label>
+                        <textarea class="form-control" id="bookcomment" rows="3" placeholder="Nhập ghi chú sách"></textarea>
+                    </div>
                     <div class="modal-footer px-0 pb-0 pt-3">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="resetForm()">Đóng</button>
-                        <button type="submit" class="btn btn-success" id="btnSubmit">Lưu Sách</button>
+                        <button type="submit" class="btn btn-success" id="btnSubmit">Lưu</button>
                     </div>
                 </form>
             </div>
@@ -135,7 +143,7 @@
                             <td class="text-start ps-4">${book.title}</td>
                             <td>${book.author}</td>
                             <td>
-                                <button class="btn btn-warning btn-sm me-1" onclick="prepareEdit(${book.id}, '${book.title.replace(/'/g, "\\'")}', '${book.author.replace(/'/g, "\\'")}')">Sửa</button>
+                                <button class="btn btn-warning btn-sm me-1" onclick="prepareEdit(${book.id}, '${book.title.replace(/'/g, "\\'")}', '${book.author.replace(/'/g, "\\'")}', ${book.point}, '${(book.bookcomment || '').replace(/'/g, "\\'")}')">Sửa</button>
                                 <button class="btn btn-danger btn-sm" onclick="deleteBook(${book.id})">Xóa</button>
                             </td>
                         </tr>
@@ -153,7 +161,7 @@
                 // Nút "Trước" (Previous)
                 paginationUl.innerHTML += `
                     <li class="page-item ${currentPage === 0 ? 'disabled' : ''}">
-                        <button class="page-item page-link" onclick="loadBooks(${currentPage - 1})">Trước</button>
+                        <button class="page-item page-link" onclick="loadBooks(${currentPage - 1})">Back</button>
                     </li>
                 `;
 
@@ -169,7 +177,7 @@
                 // Nút "Sau" (Next)
                 paginationUl.innerHTML += `
                     <li class="page-item ${currentPage === totalPages - 1 ? 'disabled' : ''}">
-                        <button class="page-item page-link" onclick="loadBooks(${currentPage + 1})">Sau</button>
+                        <button class="page-item page-link" onclick="loadBooks(${currentPage + 1})">Next</button>
                     </li>
                 `;
             })
@@ -189,7 +197,9 @@
         const bookData = {
             id: parseInt(bookId),
             title: document.getElementById("bookTitle").value,
-            author: document.getElementById("bookAuthor").value
+            author: document.getElementById("bookAuthor").value,
+            point: document.getElementById("point").value ? parseInt(document.getElementById("point").value) : null,
+            bookcomment: document.getElementById("bookcomment").value
         };
 
         if (isEditMode) {
@@ -237,23 +247,25 @@
     }
 
     function prepareAdd() { isEditMode = false; resetForm(); myModal.show(); }
-    function prepareEdit(id, title, author) {
+    function prepareEdit(id, title, author,point,bookcomment) {
         isEditMode = true;
-        document.getElementById("formTitle").innerText = "Chỉnh Sửa Sách - ID: " + id;
+        document.getElementById("formTitle").innerText = "Chỉnh sửa thông tin - ID: " + id;
         document.getElementById("bookId").value = id;
         document.getElementById("bookId").disabled = true;
         document.getElementById("bookTitle").value = title;
         document.getElementById("bookAuthor").value = author;
+        document.getElementById("point").value = point || "";
+        document.getElementById("bookcomment").value = bookcomment || "";
         document.getElementById("btnSubmit").className = "btn btn-warning";
-        document.getElementById("btnSubmit").innerText = "Cập Nhật Ngay";
+        document.getElementById("btnSubmit").innerText = "Lưu";
         myModal.show();
     }
     function resetForm() {
-        document.getElementById("formTitle").innerText = "Thêm Sách Mới";
+        document.getElementById("formTitle").innerText = "Thêm mới thông tin sách";
         document.getElementById("bookForm").reset();
         document.getElementById("bookId").disabled = false;
         document.getElementById("btnSubmit").className = "btn btn-success";
-        document.getElementById("btnSubmit").innerText = "Lưu Sách";
+        document.getElementById("btnSubmit").innerText = "Lưu";
     }
 </script>
 </body>
