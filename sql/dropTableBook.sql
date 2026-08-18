@@ -1,0 +1,2 @@
+DROP TABLE book;
+DROP SEQUENCE book_seq;

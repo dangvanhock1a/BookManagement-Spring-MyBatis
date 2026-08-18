@@ -1,0 +1,1 @@
+create database book with owner book;
