@@ -102,4 +102,11 @@ public class BookController {
         bookService.deleteBook(id);
         return "book-delete-success"; // Trả về trực tiếp tệp templates/book-delete-success.html thay vì redirect
     }
+
+    // Endpoint phục vụ riêng cho việc hiển thị trang HTML AJAX mới của bạn
+    @GetMapping("/books-ajax-view")
+    public String viewBooksAjaxPage() {
+        return "books-ajax"; // Trả về đúng tên file "books-ajax.html" nằm trong thư mục templates
+    }
+
 }

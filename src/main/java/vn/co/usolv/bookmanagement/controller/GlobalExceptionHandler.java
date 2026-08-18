@@ -1,42 +1,38 @@
-package vn.co.usolv.bookmanagement.controller;
+package vn.co.usolv.bookmanagement.controller; // Thay đổi lại đúng package của bạn
 
-import vn.co.usolv.bookmanagement.model.Book;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-/**
- * Bộ bắt lỗi tập trung cho toàn bộ ứng dụng (Spring MVC Interceptor).
- * Class này sẽ tự động "hứng" các ngoại lệ (Exceptions) quăng ra từ tầng Service hoặc Controller.
- */
+import io.swagger.v3.oas.annotations.Hidden;
+
+import java.util.HashMap;
+import java.util.Map;
+
 @ControllerAdvice
+@Hidden
 public class GlobalExceptionHandler {
 
-    /**
-     * Bắt riêng lỗi IllegalArgumentException (Lỗi do trùng ID sách từ tầng Service gửi lên).
-     * Thay vì sập ứng dụng, hệ thống sẽ đưa người dùng quay lại trang thêm mới kèm thông báo lỗi.
-     */
     @ExceptionHandler(IllegalArgumentException.class)
-    public String handleDuplicateIdException(IllegalArgumentException ex, RedirectAttributes redirectAttributes) {
-        // Lưu thông báo lỗi vào FlashAttributes để truyền an toàn qua lệnh redirect mà không lộ trên URL
-        redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
+    public Object handleIllegalArgumentException(IllegalArgumentException ex, HttpServletRequest request, Model model) {
         
-        // Khởi tạo lại một đối tượng Book rỗng để form không bị lỗi binding khi quay lại
-        redirectAttributes.addFlashAttribute("book", new Book());
-        
-        // Điều hướng quay trở lại trang đăng ký sách mới
-        return "redirect:/books/add";
-    }
+        String requestURI = request.getRequestURI();
 
-    /**
-     * Bắt tất cả các loại lỗi hệ thống khác không lường trước được (Ví dụ: Mất kết nối Database PostgreSQL).
-     * Điều hướng người dùng đến một trang thông báo chung.
-     */
-    @ExceptionHandler(Exception.class)
-    public String handleGlobalException(Exception ex, Model model) {
-        // Đẩy thông báo lỗi chi tiết vào Model để hiển thị (chỉ dùng khi dev, khi production nên ẩn đi)
-        model.addAttribute("systemError", "Hệ thống đang bận hoặc xảy ra sự cố kỹ thuật. Chi tiết: " + ex.getMessage());
-        return "error/500"; // Trả về tệp giao diện lỗi: templates/error/500.html
+        // TRƯỜNG HỢP 1: Nếu lỗi xảy ra từ hệ thống REST API (Swagger hoặc Fetch API từ client)
+        if (requestURI.startsWith("/api/")) {
+            Map<String, Object> errorBody = new HashMap<>();
+            errorBody.put("status", HttpStatus.BAD_REQUEST.value());
+            errorBody.put("error", "Bad Request");
+            errorBody.put("message", ex.getMessage()); // Chuỗi thông báo lỗi "Trùng mã ID!"
+            
+            return new ResponseEntity<>(errorBody, HttpStatus.BAD_REQUEST); // Trả về cấu trúc JSON + Mã lỗi 400
+        }
+
+        // TRƯỜNG HỢP 2: Nếu lỗi xảy ra từ Form nhập liệu Thymeleaf cũ truyền thống
+        model.addAttribute("errorMessage", ex.getMessage());
+        return "register-form"; // Điều hướng quay lại trang HTML kèm hộp cảnh báo màu đỏ
     }
 }

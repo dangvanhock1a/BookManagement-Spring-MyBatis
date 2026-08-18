@@ -11,6 +11,9 @@ import java.util.List;
 @Mapper
 public interface BookMapper {
 
+    // Đảm bảo bạn đã có hàm lấy toàn bộ danh sách như thế này
+    List<Book> findAll(); 
+
     /**
      * Lấy toàn bộ danh sách sách từ cơ sở dữ liệu sắp xếp theo ID tăng dần.
      * @return Danh sách chứa các đối tượng Book, hoặc danh sách rỗng nếu không có dữ liệu.
@@ -41,4 +44,6 @@ public interface BookMapper {
      * @param id Mã định danh của cuốn sách cần xóa.
      */
     void deleteBookById(Integer id);
+
+
 }

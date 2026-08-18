@@ -1,10 +1,13 @@
 package vn.co.usolv.bookmanagement.service.impl;
 
 import vn.co.usolv.bookmanagement.model.Book;
+import vn.co.usolv.bookmanagement.model.PageResult;
 import vn.co.usolv.bookmanagement.repository.BookMapper;
 import vn.co.usolv.bookmanagement.service.BookService;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 /**
@@ -64,5 +67,21 @@ public class BookServiceImpl implements BookService {
     @Transactional
     public void deleteBook(Integer id) {
         bookMapper.deleteBookById(id);
+    }
+
+    // 🌟 ĐỒNG BỘ CHÍNH XÁC THAM SỐ (int page, int size) VÀ KIỂU TRẢ VỀ PageResult
+    @Override
+    public PageResult<Book> findPage(int page, int size) {
+        // 1. Kích hoạt phân trang của PageHelper (Tính từ trang 1 nên cần + 1)
+        com.github.pagehelper.PageHelper.startPage(page + 1, size);
+
+        // 2. Gọi hàm lấy danh sách từ MyBatis
+        List<Book> books = bookMapper.selectAllBooks();
+
+        // 3. Sử dụng PageInfo để bóc tách lấy tổng số dòng dữ liệu
+        com.github.pagehelper.PageInfo<Book> pageInfo = new com.github.pagehelper.PageInfo<>(books);
+
+        // 4. Trả về đối tượng cấu trúc phân trang tùy biến của bạn
+        return new PageResult<>(books, pageInfo.getPages(), pageInfo.getTotal());
     }
 }

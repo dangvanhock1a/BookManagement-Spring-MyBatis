@@ -3,6 +3,8 @@ package vn.co.usolv.bookmanagement.service;
 import vn.co.usolv.bookmanagement.model.Book;
 import java.util.List;
 
+import vn.co.usolv.bookmanagement.model.PageResult;
+
 /**
  * Giao diện (Interface) định nghĩa các dịch vụ xử lý nghiệp vụ quản lý sách.
  * Đóng vai trò là cầu nối lỏng lẻo (loose coupling) giữa Tầng điều khiển (Controller) và Tầng dữ liệu (Repository).
@@ -23,4 +25,7 @@ public interface BookService {
 
     /** Xử lý nghiệp vụ xóa sách */
     void deleteBook(Integer id);
+
+    // 🌟 ĐẢM BẢO DÒNG NÀY PHẢI VIẾT CHÍNH XÁC NHƯ SAU:
+    PageResult<Book> findPage(int page, int size);
 }
